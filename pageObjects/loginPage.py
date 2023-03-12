@@ -1,7 +1,8 @@
 from playwright.sync_api import Page
+from utilities.readConfig import ReadConfig
 
 class LoginPage:
-    url = "https://katalon-demo-cura.herokuapp.com/"
+    url = ReadConfig.getApplicationURL()
     # Locators 
     textbox_username_id = '#txt-username'
     textbox_password_id = '#txt-password'
