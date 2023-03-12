@@ -8,11 +8,14 @@ import pytest
 from playwright.sync_api import expect, Page
 from pageObjects.appointmentPage import AppointmentPage
 from pageObjects.loginPage import LoginPage
+from utilities.readConfig import ReadConfig
 
 class TestAppointmentPage:
+    baseURL = ReadConfig.getApplicationURL()
+    appointmentPageURL = f"{baseURL}/#appointment"
     user ={
-            "username": "John Doe",
-            "password": "ThisIsNotAPassword"
+            "username": ReadConfig.getUsername(),
+            "password": ReadConfig.getPassword()
         }
     
     def test_createAppointment_TC010(self, page: Page) -> None:
@@ -27,7 +30,7 @@ class TestAppointmentPage:
         # test_data = [{"facility_value":"Tokyo CURA Healthcare Center","readmission":"True","noneProgram":"False","medicareProgram":"True","medicaidProgram":"False","visitDate":"14/2/2020","comment":"Tokyo CURA Healthcare Center"},{"facility_value":"Tokyo CURA Healthcare Center","readmission":"False","noneProgram":"True","medicareProgram":"False","medicaidProgram":"False","visitDate":"5/3/2020","comment":"Tokyo CURA Healthcare Center 2"},{"facility_value":"Seoul CURA Healthcare Center","readmission":"True","noneProgram":"False","medicareProgram":"True","medicaidProgram":"False","visitDate":"20/5/2019","comment":"Seoul CURA Healthcare Center"},{"facility_value":"Hongkong CURA Healthcare Center","readmission":"False","noneProgram":"False","medicareProgram":"False","medicaidProgram":"True","visitDate":"5/8/2022","comment":"Hongkong CURA Healthcare Center"}]
         
         for data in test_data:
-            page.goto("https://katalon-demo-cura.herokuapp.com/#appointment")
+            page.goto(self.appointmentPageURL)
             appointment = AppointmentPage(page)
             # page.pause()
             appointment.create_appointment(data)
@@ -51,7 +54,7 @@ class TestAppointmentPage:
         test_data = {"facility_value":"Hongkong CURA Healthcare Center","readmission":"False","noneProgram":"False","medicareProgram":"False","medicaidProgram":"True","visitDate":"05/08/2022","comment":"Hongkong CURA Healthcare Center"}
         
 
-        page.goto("https://katalon-demo-cura.herokuapp.com/#appointment")
+        page.goto(self.appointmentPageURL)
         appointment = AppointmentPage(page)
         # page.pause()
         appointment.create_appointment(test_data)

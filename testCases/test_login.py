@@ -2,104 +2,96 @@ import pytest
 from pageObjects.loginPage import LoginPage
 from playwright.sync_api import expect, Page
 from utilities import ExcelUtils
+from utilities.readConfig import ReadConfig
 
 class TestLogin:
     """ This class includes TCs for all login scenarios
     """
     file_path = "./testData/login_data.xlsx"
+    baseURL = ReadConfig.getApplicationURL()
     user = {
-            "username": "John Doe",
-            "password": "ThisIsNotAPassword"
+            "username": ReadConfig.getUsername(),
+            "password": ReadConfig.getPassword()
         }
-    
-    # def test_navigate_to_loginPage(self, page: Page) -> None:
-    #     """ Navigate to login page from homepage
 
-    #     Args:
-    #         page (Page): Page object
-    #     """
-    #     login_page = LoginPage()
-    #     login_page.navigate_login()
-
-
-    # def test_001_login_UI(self, page: Page) -> None:
-    #     login_page = LoginPage(page)
+    def test_001_login_UI(self, page: Page) -> None:
+        login_page = LoginPage(page)
         
-    #     login_page.navigate_login()
+        login_page.navigate_login()
 
-    #     # Verify login page
-    #     expect(page).to_have_title("CURA Healthcare Service")
-    #     assert "login" in page.url
-    #     assert page.inner_text("h2") == "Login"
+        # Verify login page
+        expect(page).to_have_title("CURA Healthcare Service")
+        assert "login" in page.url
+        assert page.inner_text("h2") == "Login"
 
-    #     # Verify form-field labels
-    #     expect(page.locator('//label[contains(@for,"txt-username")]')).to_have_text("Username")
-    #     expect(page.locator('//label[@for="txt-password"]')).to_have_text("Password")
-    #     expect(page.locator('#btn-login')).to_have_attribute("type", "submit")
-    #     expect(page.locator('#btn-login')).to_have_text("Login")
+        # Verify form-field labels
+        expect(page.locator('//label[contains(@for,"txt-username")]')).to_have_text("Username")
+        expect(page.locator('//label[@for="txt-password"]')).to_have_text("Password")
+        expect(page.locator('#btn-login')).to_have_attribute("type", "submit")
+        expect(page.locator('#btn-login')).to_have_text("Login")
 
-    #     # Verify Placeholders
-    #     expect(page.locator('//input[@id="txt-username"]')).to_have_attribute("placeholder", "Username")
-    #     # expect(page.locator('//input[@id="txt-password"]')).to_have_attribute("placeholder", "Password")
-    #     assert page.locator('//input[@id="txt-password"]').get_attribute("placeholder") == "Password"
+        # Verify Placeholders
+        expect(page.locator('//input[@id="txt-username"]')).to_have_attribute("placeholder", "Username")
+        # expect(page.locator('//input[@id="txt-password"]')).to_have_attribute("placeholder", "Password")
+        assert page.locator('//input[@id="txt-password"]').get_attribute("placeholder") == "Password"
 
     # def test_valid_login(page: Page, login_page: LoginPage) -> None:
-    # def test_002_valid_login(self, page: Page) -> None:
-    #     login_page = LoginPage(page)
+    def test_002_valid_login(self, page: Page) -> None:
+        login_page = LoginPage(page)
         
-    #     login_page.load_loginPage()
+        login_page.load_loginPage()
         
-    #     login_page.login(self.user)
-    #     # assert page.inner_text("h2") == "Make Appointment"
-    #     actual_title = page.inner_text("h2")
-    #     expected_title = "Make Appointment"
-    #     if actual_title == expected_title:
-    #         # logger info -> login pass
-    #         assert True
-    #     else:
-    #         # logger error -> login fail
-    #         # Take screenshot
-    #         assert False
+        login_page.login(self.user)
+        # assert page.inner_text("h2") == "Make Appointment"
+        actual_title = page.inner_text("h2")
+        expected_title = "Make Appointment"
+        if actual_title == expected_title:
+            # logger info -> login pass
+            assert True
+        else:
+            # logger error -> login fail
+            # Take screenshot
+            assert False
 
-    # def test_003_invalid_login(self, page: Page) -> None:
-    #     """_summary_
+    def test_003_invalid_login(self, page: Page) -> None:
+        """_summary_
 
-    #     Args:
-    #         page (Page): _description_
-    #     """
-    #     # Use ddt for Invalid login checks:=> username, password, message, status(pass/fail)
+        Args:
+            page (Page): _description_
+        """
+        # Use ddt for Invalid login checks:=> username, password, message, status(pass/fail)
 
-    #     login_page = LoginPage(page)
-    #     login_page.load_loginPage()
+        login_page = LoginPage(page)
+        login_page.load_loginPage()
 
-    #     sheetName = "InvalidCreds"
-    #     rows = ExcelUtils.getRowCount(self.file_path, sheetName)
-    #     status = []
+        sheetName = "InvalidCreds"
+        rows = ExcelUtils.getRowCount(self.file_path, sheetName)
+        status = []
 
-    #     for row in range(2, rows+1):
-    #         self.user["username"] = ExcelUtils.readData(self.file_path, sheetName, row, 1)
-    #         self.user["password"] = ExcelUtils.readData(self.file_path, sheetName, row, 2)
-    #         expected_error_msg = ExcelUtils.readData(self.file_path, sheetName, row, 3)
-    #         test_desc = ExcelUtils.readData(self.file_path, sheetName, row, 5)
+        for row in range(2, rows+1):
+            self.user["username"] = ExcelUtils.readData(self.file_path, sheetName, row, 1)
+            self.user["password"] = ExcelUtils.readData(self.file_path, sheetName, row, 2)
+            expected_error_msg = ExcelUtils.readData(self.file_path, sheetName, row, 3)
+            test_desc = ExcelUtils.readData(self.file_path, sheetName, row, 5)
             
-    #         login_page.login(self.user)
-    #         text_error_xpath = "p.lead.text-danger"
-    #         actual_error_msg = page.inner_text(text_error_xpath)
+            login_page.login(self.user)
+            text_error_xpath = "p.lead.text-danger"
+            actual_error_msg = page.inner_text(text_error_xpath)
 
-    #         if expected_error_msg == actual_error_msg:
-    #             # log msg
-    #             status.append("Pass")
-    #         else:
-    #             # log test_desc Test failed
-    #             # Take screenshot
-    #             status.append("Fail")
-    #     # Checks
-    #     if "Fail" not in status:
-    #         # log info Test passed
-    #         assert True
-    #     else:
-    #         # log infor Test failed
-    #         assert False
+            if expected_error_msg == actual_error_msg:
+                # log msg
+                status.append("Pass")
+            else:
+                # log test_desc Test failed
+                # Take screenshot
+                status.append("Fail")
+        # Checks
+        if "Fail" not in status:
+            # log info Test passed
+            assert True
+        else:
+            # log infor Test failed
+            assert False
 
     
     def test_004_login_input_validation(self, page: Page) -> None:
@@ -171,7 +163,7 @@ class TestLogin:
         Args:
             page (Page): _description_
         """
-        page.goto("https://katalon-demo-cura.herokuapp.com/#appointment")
+        page.goto(self.baseURL)
         btn_bookAppointment_id = "#btn-book-appointment"
         check = page.locator(btn_bookAppointment_id).is_visible(timeout=40000)
         if check == False:

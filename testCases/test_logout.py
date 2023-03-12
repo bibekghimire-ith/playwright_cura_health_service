@@ -4,6 +4,7 @@
 import pytest
 from playwright.sync_api import expect, Page
 from pageObjects.loginPage import LoginPage
+from utilities.readConfig import ReadConfig
 
 class TestLogout:
     # Locators
@@ -11,9 +12,10 @@ class TestLogout:
     link_logout_xpath = '//a[@href="authenticate.php?logout"]'
     btn_bookAppointment_id = "#btn-book-appointment"
 
+    baseURL = ReadConfig.getApplicationURL()
     user = {
-            "username": "John Doe",
-            "password": "ThisIsNotAPassword"
+            "username": ReadConfig.getUsername(),
+            "password": ReadConfig.getPassword()
         }
     
     def test_logout_TC008(self, page: Page) -> None:
@@ -26,7 +28,7 @@ class TestLogout:
             try:
                 page.locator(self.link_logout_xpath).wait_for()
                 page.locator(self.link_logout_xpath).click()
-                expect(page).to_have_url("https://katalon-demo-cura.herokuapp.com/")
+                expect(page).to_have_url(self.baseURL)
                 # assert page.locator(self.btn_bookAppointment_id).is_visible()
             except Exception as e:
                 # Add Exception insted of assertion
@@ -55,7 +57,7 @@ class TestLogout:
 
         try: 
             page.go_back()
-            expect(page).to_have_url("https://katalon-demo-cura.herokuapp.com/")
+            expect(page).to_have_url(self.baseURL)
             btn_bookAppointment_id = "#btn-book-appointment"
             check = page.locator(btn_bookAppointment_id).is_visible(timeout=40000)
             if check == False:
