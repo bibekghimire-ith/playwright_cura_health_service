@@ -51,6 +51,7 @@ class TestLogin:
         else:
             # logger error -> login fail
             # Take screenshot
+            page.screenshot(path="./Report/Screenshots/test_002_valid_login.png", full_page=True)
             assert False
 
     def test_003_invalid_login(self, page: Page) -> None:
@@ -83,7 +84,6 @@ class TestLogin:
                 status.append("Pass")
             else:
                 # log test_desc Test failed
-                # Take screenshot
                 status.append("Fail")
         # Checks
         if "Fail" not in status:
@@ -91,6 +91,8 @@ class TestLogin:
             assert True
         else:
             # log infor Test failed
+            # Take screenshot
+            page.screenshot(path="./Report/Screenshots/test_003_invalid_login.png", full_page=True)
             assert False
 
     
@@ -132,6 +134,8 @@ class TestLogin:
             assert True
         else:
             # log infor Test failed
+            # Take screenshot
+            page.screenshot(path="./Report/Screenshots/test_004_login_input_validation.png", full_page=True)
             assert False
 
     # def test_005_login_security(self, page: Page) -> None:
@@ -155,6 +159,13 @@ class TestLogin:
         
         login_page.navigate_login()
         expect(page.locator('//input[@id="txt-password"]')).to_have_attribute("type", "password")
+        # Test Failed for below
+        # if expect(page.locator('//input[@id="txt-password"]')).to_have_attribute("type", "password"):
+        #     assert True
+        # else:
+        #     # Take screenshot
+        #     page.screenshot(path="./Report/Screenshots/test_006_if_password_field_masked.png", full_page=True)
+        #     assert False
 
     
     def test_007_access_dashboard_without_login(self, page: Page) -> None:
@@ -172,4 +183,6 @@ class TestLogin:
             assert True
         else:
             # log error
+            # Take screenshot
+            page.screenshot(path="./Report/Screenshots/test_007_access_dashboard_without_login.png", full_page=True)
             assert False

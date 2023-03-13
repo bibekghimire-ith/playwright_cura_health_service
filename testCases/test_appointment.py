@@ -43,6 +43,8 @@ class TestAppointmentPage:
         if "Fail" not in result:
             assert True
         else:
+            # Take screenshot on fail
+            page.screenshot(path="./Report/Screenshots/test_createAppointment_TC010.png", full_page=True)
             assert False
 
     def test_appointment_conformation_TC011(self, page: Page) -> None:
@@ -83,5 +85,7 @@ class TestAppointmentPage:
             assert conformation_details["program"] == program
         else:
             # log error "Failed to create appointment"
+            # Take screenshot on fail
+            page.screenshot(path="./Report/Screenshots/test_appointment_conformation_TC011.png", full_page=True)
             assert False
         

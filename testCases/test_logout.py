@@ -35,6 +35,8 @@ class TestLogout:
                 assert False
         else:
             # log error "Login Failed"
+            # Take screenshot
+            page.screenshot(path="./Report/Screenshots/test_logout_TC008.png", full_page=True)
             assert False
 
     def test_navigate_back_TC009(self, page: Page) -> None:
@@ -66,6 +68,8 @@ class TestLogout:
                 assert True
             else:
                 # log error
+                # Take screenshot
+                page.screenshot(path="./Report/Screenshots/test_navigate_back_TC009.png", full_page=True)
                 assert False
         except Exception as e:
             print(e)
