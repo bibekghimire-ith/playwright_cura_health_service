@@ -69,6 +69,7 @@ class TestLogin:
         rows = ExcelUtils.getRowCount(self.file_path, sheetName)
         status = []
 
+        k = 0
         for row in range(2, rows+1):
             self.user["username"] = ExcelUtils.readData(self.file_path, sheetName, row, 1)
             self.user["password"] = ExcelUtils.readData(self.file_path, sheetName, row, 2)
@@ -84,15 +85,19 @@ class TestLogin:
                 status.append("Pass")
             else:
                 # log test_desc Test failed
+                # Take screenshot
+                # TODO: image path needs to be updated. For this, "id" field should be added in the test_data and same should be concatenated 
+                # to the image path
+                image_path = f"./Report/Screenshots/test_003_invalid_login{k}.png"
+                page.screenshot(path=image_path, full_page=True)
                 status.append("Fail")
+            k = k + 1
         # Checks
         if "Fail" not in status:
             # log info Test passed
             assert True
         else:
             # log infor Test failed
-            # Take screenshot
-            page.screenshot(path="./Report/Screenshots/test_003_invalid_login.png", full_page=True)
             assert False
 
     
@@ -111,6 +116,7 @@ class TestLogin:
         status = []
 
         # page.pause()
+        i = 0
         for row in range(2, rows+1):
             self.user["username"] = ExcelUtils.readData(self.file_path, sheetName, row, 1)
             self.user["password"] = ExcelUtils.readData(self.file_path, sheetName, row, 2)
@@ -127,15 +133,18 @@ class TestLogin:
             else:
                 # log test_desc Test failed
                 # Take screenshot
+                # TODO: image path needs to be updated. For this, "id" field should be added in the test_data and same should be concatenated 
+                # to the image path
+                image_path = f"./Report/Screenshots/test_004_login_input_validation{i}.png"
+                page.screenshot(path=image_path, full_page=True)
                 status.append("Fail")
+            i = i + 1
         # Checks
         if "Fail" not in status:
             # log info Test passed
             assert True
         else:
             # log infor Test failed
-            # Take screenshot
-            page.screenshot(path="./Report/Screenshots/test_004_login_input_validation.png", full_page=True)
             assert False
 
     # def test_005_login_security(self, page: Page) -> None:

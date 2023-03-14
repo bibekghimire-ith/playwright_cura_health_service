@@ -28,7 +28,7 @@ class TestAppointmentPage:
         # test_data = [{"facility_value":"Hongkong CURA Healthcare Center","readmission":"False","noneProgram":"False","medicareProgram":"False","medicaidProgram":"True","visitDate":"","comment":"Hongkong CURA Healthcare Center"}]
 
         # test_data = [{"facility_value":"Tokyo CURA Healthcare Center","readmission":"True","noneProgram":"False","medicareProgram":"True","medicaidProgram":"False","visitDate":"14/2/2020","comment":"Tokyo CURA Healthcare Center"},{"facility_value":"Tokyo CURA Healthcare Center","readmission":"False","noneProgram":"True","medicareProgram":"False","medicaidProgram":"False","visitDate":"5/3/2020","comment":"Tokyo CURA Healthcare Center 2"},{"facility_value":"Seoul CURA Healthcare Center","readmission":"True","noneProgram":"False","medicareProgram":"True","medicaidProgram":"False","visitDate":"20/5/2019","comment":"Seoul CURA Healthcare Center"},{"facility_value":"Hongkong CURA Healthcare Center","readmission":"False","noneProgram":"False","medicareProgram":"False","medicaidProgram":"True","visitDate":"5/8/2022","comment":"Hongkong CURA Healthcare Center"}]
-        
+        i = 1
         for data in test_data:
             page.goto(self.appointmentPageURL)
             appointment = AppointmentPage(page)
@@ -38,13 +38,17 @@ class TestAppointmentPage:
             if page.inner_text("h2") == "Appointment Confirmation":
                 result.append("Pass")
             else:
+                # Take screenshot on fail
+                # TODO: image path needs to be updated. For this, "id" field should be added in the test_data and same should be concatenated 
+                # to the image path
+                image_path = f"./Report/Screenshots/test_createAppointment_TC010_{i}.png"
+                page.screenshot(path=image_path, full_page=True)
                 result.append("Fail")
+            i = i + 1
         # page.pause()
         if "Fail" not in result:
             assert True
         else:
-            # Take screenshot on fail
-            page.screenshot(path="./Report/Screenshots/test_createAppointment_TC010.png", full_page=True)
             assert False
 
     def test_appointment_conformation_TC011(self, page: Page) -> None:
