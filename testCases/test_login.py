@@ -4,6 +4,9 @@ from playwright.sync_api import expect, Page
 from utilities import ExcelUtils
 from utilities.readConfig import ReadConfig
 
+import logging
+from utilities.customLogger import customLogen
+
 class TestLogin:
     """ This class includes TCs for all login scenarios
     """
@@ -14,7 +17,14 @@ class TestLogin:
             "password": ReadConfig.getPassword()
         }
 
+    # Logger initialization...
+    loggen = customLogen()
+
     def test_001_login_UI(self, page: Page) -> None:
+        # logger...
+        logger = self.loggen.customLogger("test_001_login_UI", logging.INFO)
+        logger.info("Starting test 'test_001_login_UI'")
+        
         login_page = LoginPage(page)
         
         login_page.navigate_login()
@@ -34,9 +44,13 @@ class TestLogin:
         expect(page.locator('//input[@id="txt-username"]')).to_have_attribute("placeholder", "Username")
         # expect(page.locator('//input[@id="txt-password"]')).to_have_attribute("placeholder", "Password")
         assert page.locator('//input[@id="txt-password"]').get_attribute("placeholder") == "Password"
+        logger.info("Completed test 'test_001_login_UI'")
 
     # def test_valid_login(page: Page, login_page: LoginPage) -> None:
     def test_002_valid_login(self, page: Page) -> None:
+        logger = self.loggen.customLogger("test_002_valid_login", logging.INFO)
+        logger.info("Starting test 'test_002_valid_login'")
+
         login_page = LoginPage(page)
         
         login_page.load_loginPage()
@@ -47,12 +61,16 @@ class TestLogin:
         expected_title = "Make Appointment"
         if actual_title == expected_title:
             # logger info -> login pass
+            logger.info("Test 'test_002_valid_login' passed")
             assert True
         else:
             # logger error -> login fail
+            logger.error("Failed to login")
+            logger.error('Test "test_002_valid_login" failed')
             # Take screenshot
             page.screenshot(path="./Report/Screenshots/test_002_valid_login.png", full_page=True)
             assert False
+        logger.info("Completed test 'test_002_valid_login'")
 
     def test_003_invalid_login(self, page: Page) -> None:
         """_summary_
@@ -61,6 +79,8 @@ class TestLogin:
             page (Page): _description_
         """
         # Use ddt for Invalid login checks:=> username, password, message, status(pass/fail)
+        logger = self.loggen.customLogger("test_003_invalid_login", logging.INFO)
+        logger.info('Starting test "test_003_invalid_login"')
 
         login_page = LoginPage(page)
         login_page.load_loginPage()
@@ -69,7 +89,6 @@ class TestLogin:
         rows = ExcelUtils.getRowCount(self.file_path, sheetName)
         status = []
 
-        k = 0
         for row in range(2, rows+1):
             self.user["username"] = ExcelUtils.readData(self.file_path, sheetName, row, 1)
             self.user["password"] = ExcelUtils.readData(self.file_path, sheetName, row, 2)
@@ -82,24 +101,28 @@ class TestLogin:
 
             if expected_error_msg == actual_error_msg:
                 # log msg
+                logger.info(f'test_003_invalid_login passed for data: {self.user} -> {test_desc}')
                 status.append("Pass")
             else:
                 # log test_desc Test failed
+                logger.error(f'test_003_invalid_login failed for data: f{self.user} -> {test_desc}')
                 # Take screenshot
                 # TODO: image path needs to be updated. For this, "id" field should be added in the test_data and same should be concatenated 
                 # to the image path
-                image_path = f"./Report/Screenshots/test_003_invalid_login{k}.png"
+                image_path = f"./Report/Screenshots/test_003_invalid_login_{test_desc}.png"
                 page.screenshot(path=image_path, full_page=True)
                 status.append("Fail")
-            k = k + 1
+            
         # Checks
         if "Fail" not in status:
             # log info Test passed
+            logger.info('Test "test_003_invalid_login" passed')
             assert True
         else:
             # log infor Test failed
+            logger.error('Test "test_003_invalid_login" failed')
             assert False
-
+        logger.info('Completed test "test_003_invalid_login"')
     
     def test_004_login_input_validation(self, page: Page) -> None:
         """ Verify validation messages for empty field, char length, other validation
@@ -107,6 +130,10 @@ class TestLogin:
         Args:
             page (Page): _description_
         """
+        # logger
+        logger = self.loggen.customLogger("test_004_login_input_validation", logging.INFO)
+        logger.info('Starting test "test_004_login_input_validation"')
+
         # inputValidation
         login_page = LoginPage(page)
         login_page.load_loginPage()
@@ -116,7 +143,7 @@ class TestLogin:
         status = []
 
         # page.pause()
-        i = 0
+
         for row in range(2, rows+1):
             self.user["username"] = ExcelUtils.readData(self.file_path, sheetName, row, 1)
             self.user["password"] = ExcelUtils.readData(self.file_path, sheetName, row, 2)
@@ -129,23 +156,28 @@ class TestLogin:
 
             if expected_error_msg == actual_error_msg:
                 # log msg
+                logger.info(f'"test_004_login_input_validation" passed for data: {self.user} -> {test_desc}')
                 status.append("Pass")
             else:
                 # log test_desc Test failed
+                logger.error(f'"test_004_login_input_validation" failed for data: f{self.user} -> {test_desc}')
                 # Take screenshot
                 # TODO: image path needs to be updated. For this, "id" field should be added in the test_data and same should be concatenated 
                 # to the image path
-                image_path = f"./Report/Screenshots/test_004_login_input_validation{i}.png"
+                image_path = f"./Report/Screenshots/test_004_login_input_validation_{test_desc}.png"
                 page.screenshot(path=image_path, full_page=True)
                 status.append("Fail")
-            i = i + 1
+
         # Checks
         if "Fail" not in status:
             # log info Test passed
+            logger.info('Test "test_004_login_input_validation" passed')
             assert True
         else:
             # log infor Test failed
+            logger.error('Test "test_004_login_input_validation" failed')
             assert False
+        logger.info('Completed test "test_004_login_input_validation"')
 
     # def test_005_login_security(self, page: Page) -> None:
     #     """ Verify limit of unsuccessful login attempts to prevent Brute-force attacks
@@ -164,10 +196,13 @@ class TestLogin:
         Args:
             page (Page): _description_
         """
+        logger = self.loggen.customLogger("test_006_if_password_field_masked", logging.INFO)
+        logger.info('Starting test "test_006_if_password_field_masked"')
         login_page = LoginPage(page)
         
         login_page.navigate_login()
         expect(page.locator('//input[@id="txt-password"]')).to_have_attribute("type", "password")
+        logger.info("Completed test 'test_006_if_password_field_masked'")
         # Test Failed for below
         # if expect(page.locator('//input[@id="txt-password"]')).to_have_attribute("type", "password"):
         #     assert True
@@ -183,15 +218,20 @@ class TestLogin:
         Args:
             page (Page): _description_
         """
+        logger = self.loggen.customLogger("test_007_access_dashboard_without_login", logging.INFO)
+        logger.info('Starting test "test_007_access_dashboard_without_login"')
         page.goto(self.baseURL)
         btn_bookAppointment_id = "#btn-book-appointment"
         check = page.locator(btn_bookAppointment_id).is_visible(timeout=40000)
         if check == False:
             # Page is not navigated to Appointment page
             # Test passed
+            logger.info('Test "test_007_access_dashboard_without_login" passed')
             assert True
         else:
             # log error
+            logger.error('Test "test_007_access_dashboard_without_login" failed')
             # Take screenshot
             page.screenshot(path="./Report/Screenshots/test_007_access_dashboard_without_login.png", full_page=True)
             assert False
+        logger.info('Completed test "test_007_access_dashboard_without_login"')

@@ -10,6 +10,9 @@ from pageObjects.appointmentPage import AppointmentPage
 from pageObjects.loginPage import LoginPage
 from utilities.readConfig import ReadConfig
 
+import logging
+from utilities.customLogger import customLogen
+
 class TestAppointmentPage:
     baseURL = ReadConfig.getApplicationURL()
     appointmentPageURL = f"{baseURL}/#appointment"
@@ -17,8 +20,12 @@ class TestAppointmentPage:
             "username": ReadConfig.getUsername(),
             "password": ReadConfig.getPassword()
         }
+    # logger initialization
+    loggen = customLogen()
     
     def test_createAppointment_TC010(self, page: Page) -> None:
+        logger = self.loggen.customLogger("test_createAppointment_TC010", logging.INFO)
+        logger.info('Starting Test "test_createAppointment_TC010"')
         login = LoginPage(page)
         login.load_loginPage()
         login.login(self.user)
@@ -36,9 +43,11 @@ class TestAppointmentPage:
             appointment.create_appointment(data)
             # Conformation page
             if page.inner_text("h2") == "Appointment Confirmation":
+                logger.info(f'Test passed for data: {data}')
                 result.append("Pass")
             else:
                 # Take screenshot on fail
+                logger.error(f'Test failed for data: {data}')
                 # TODO: image path needs to be updated. For this, "id" field should be added in the test_data and same should be concatenated 
                 # to the image path
                 image_path = f"./Report/Screenshots/test_createAppointment_TC010_{i}.png"
@@ -47,11 +56,17 @@ class TestAppointmentPage:
             i = i + 1
         # page.pause()
         if "Fail" not in result:
+            logger.info('Test "test_createAppointment_TC010" passed')
             assert True
         else:
+            logger.error('Test "test_createAppointment_TC010" failed')
             assert False
+        logger.info('Test "test_createAppointment_TC010" completed')
 
     def test_appointment_conformation_TC011(self, page: Page) -> None:
+        logger = self.loggen.customLogger("test_appointment_conformation_TC011")
+        logger.info('Test "test_appointment_conformation_TC011" started')
+
         login = LoginPage(page)
         login.load_loginPage()
         login.login(self.user)
@@ -87,9 +102,12 @@ class TestAppointmentPage:
             assert conformation_details["visitDate"] == test_data["visitDate"]
             assert conformation_details["comment"] == test_data["comment"]
             assert conformation_details["program"] == program
+            logger.info('Test "test_appointment_conformation_TC011" passed')
         else:
             # log error "Failed to create appointment"
+            logger.warning("Failed to create appointment")
+            logger.error('Test "test_appointment_conformation_TC011" failed')
             # Take screenshot on fail
             page.screenshot(path="./Report/Screenshots/test_appointment_conformation_TC011.png", full_page=True)
             assert False
-        
+        logger.info('Test "test_appointment_conformation_TC011" completed')

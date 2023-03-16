@@ -1,0 +1,22 @@
+2023/03/16 21:27:44 - INFO - test_001_login_UI : Starting test 'test_001_login_UI'
+2023/03/16 21:27:50 - INFO - test_001_login_UI : Completed test 'test_001_login_UI'
+2023/03/16 21:27:50 - INFO - test_002_valid_login : Starting test 'test_002_valid_login'
+2023/03/16 21:27:56 - INFO - test_002_valid_login : Test 'test_002_valid_login' passed
+2023/03/16 21:27:56 - INFO - test_002_valid_login : Completed test 'test_002_valid_login'
+2023/03/16 21:27:56 - INFO - test_003_invalid_login : Starting test "test_003_invalid_login"
+2023/03/16 21:28:02 - INFO - test_003_invalid_login : test_003_invalid_login passed for data: {'username': 'john', 'password': 'ThisIsNotAPassword'} -> Invalid Username
+2023/03/16 21:28:03 - INFO - test_003_invalid_login : test_003_invalid_login passed for data: {'username': 'John Doe', 'password': 'test'} -> Invalid Password
+2023/03/16 21:28:04 - INFO - test_003_invalid_login : test_003_invalid_login passed for data: {'username': 'test', 'password': 'test'} -> Invalid username and password
+2023/03/16 21:28:04 - INFO - test_003_invalid_login : Test "test_003_invalid_login" passed
+2023/03/16 21:28:04 - INFO - test_003_invalid_login : Completed test "test_003_invalid_login"
+2023/03/16 21:28:04 - INFO - test_004_login_input_validation : Starting test "test_004_login_input_validation"
+2023/03/16 21:28:07 - INFO - test_004_login_input_validation : "test_004_login_input_validation" passed for data: {'username': 'John Doe', 'password': ''} -> Empty Password Field
+2023/03/16 21:28:08 - INFO - test_004_login_input_validation : "test_004_login_input_validation" passed for data: {'username': '', 'password': 'ThisIsNotAPassword'} -> Empty Username Field
+2023/03/16 21:28:09 - INFO - test_004_login_input_validation : "test_004_login_input_validation" passed for data: {'username': '', 'password': ''} -> Both Username and Password Fields empty
+2023/03/16 21:28:09 - INFO - test_004_login_input_validation : Test "test_004_login_input_validation" passed
+2023/03/16 21:28:09 - INFO - test_004_login_input_validation : Completed test "test_004_login_input_validation"
+2023/03/16 21:28:09 - INFO - test_006_if_password_field_masked : Starting test "test_006_if_password_field_masked"
+2023/03/16 21:28:12 - INFO - test_006_if_password_field_masked : Completed test 'test_006_if_password_field_masked'
+2023/03/16 21:28:12 - INFO - test_007_access_dashboard_without_login : Starting test "test_007_access_dashboard_without_login"
+2023/03/16 21:28:19 - INFO - test_007_access_dashboard_without_login : Test "test_007_access_dashboard_without_login" passed
+2023/03/16 21:28:19 - ERROR - test_007_access_dashboard_without_login : Completed test "test_007_access_dashboard_without_login"
