@@ -24,11 +24,15 @@ class TestLogout:
             "password": ReadConfig.getPassword()
         }
     
-    def test_logout_TC008(self, page: Page) -> None:
+
+    def test_logout_TC008(self, page: Page, setup_login) -> None:
+        login = setup_login
         logger.info("Started test 'test_logout_TC008'")
-        login = LoginPage(page)
-        login.load_loginPage()
-        login.login(self.user)
+        # login = LoginPage(page)
+        # login.load_loginPage()
+        # login.login(self.user)
+
+        # page = setup_teardown_login
 
         if "appointment" in page.url:
             page.locator(self.link_toggle_id).click()
@@ -51,6 +55,7 @@ class TestLogout:
             assert False
         logger.info("Completed test 'test_logout_TC008'")
 
+    # Failing test case..
     def test_navigate_back_TC009(self, page: Page) -> None:
         """After logging out, if back arrow of browser is clicked, page should not be router to "Appointment Page"
             TC Steps:
