@@ -20,6 +20,7 @@ class TestLogin:
     # Logger initialization...
     loggen = customLogen()
 
+    @pytest.mark.smoke
     def test_001_login_UI(self, page: Page) -> None:
         # logger...
         logger = self.loggen.customLogger("test_001_login_UI", logging.INFO)
@@ -46,7 +47,9 @@ class TestLogin:
         assert page.locator('//input[@id="txt-password"]').get_attribute("placeholder") == "Password"
         logger.info("Completed test 'test_001_login_UI'")
 
+
     # def test_valid_login(page: Page, login_page: LoginPage) -> None:
+    @pytest.mark.smoke
     def test_002_valid_login(self, page: Page) -> None:
         logger = self.loggen.customLogger("test_002_valid_login", logging.INFO)
         logger.info("Starting test 'test_002_valid_login'")
@@ -72,6 +75,7 @@ class TestLogin:
             assert False
         logger.info("Completed test 'test_002_valid_login'")
 
+    @pytest.mark.regression
     def test_003_invalid_login(self, page: Page) -> None:
         """_summary_
 
@@ -124,6 +128,7 @@ class TestLogin:
             assert False
         logger.info('Completed test "test_003_invalid_login"')
     
+    @pytest.mark.regression
     def test_004_login_input_validation(self, page: Page) -> None:
         """ Verify validation messages for empty field, char length, other validation
 
@@ -190,6 +195,8 @@ class TestLogin:
     #     """
     #     # loginSecurity
 
+    @pytest.mark.smoke
+    @pytest.mark.regression
     def test_006_if_password_field_masked(self, page: Page) -> None:
         """ Check if password entered is displayed as "*" instead of actual string
 
@@ -201,6 +208,7 @@ class TestLogin:
         login_page = LoginPage(page)
         
         login_page.navigate_login()
+        # TODO: first get attribute of password and check if it is of type password
         expect(page.locator('//input[@id="txt-password"]')).to_have_attribute("type", "password")
         logger.info("Completed test 'test_006_if_password_field_masked'")
         # Test Failed for below
@@ -211,7 +219,8 @@ class TestLogin:
         #     page.screenshot(path="./Report/Screenshots/test_006_if_password_field_masked.png", full_page=True)
         #     assert False
 
-    
+    @pytest.mark.smoke
+    @pytest.mark.regression
     def test_007_access_dashboard_without_login(self, page: Page) -> None:
         """_summary_
 
