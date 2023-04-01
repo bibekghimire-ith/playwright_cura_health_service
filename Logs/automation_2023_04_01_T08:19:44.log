@@ -1,0 +1,11 @@
+2023/04/01 08:19:50 - INFO - test_002_valid_login : Starting test 'test_002_valid_login'
+2023/04/01 08:19:55 - INFO - test_002_valid_login : Test 'test_002_valid_login' passed
+2023/04/01 08:19:55 - INFO - test_002_valid_login : Completed test 'test_002_valid_login'
+2023/04/01 08:19:55 - INFO - test_006_if_password_field_masked : Starting test "test_006_if_password_field_masked"
+2023/04/01 08:19:59 - INFO - test_006_if_password_field_masked : Completed test 'test_006_if_password_field_masked'
+2023/04/01 08:19:59 - INFO - test_007_access_dashboard_without_login : Starting test "test_007_access_dashboard_without_login"
+2023/04/01 08:20:02 - INFO - test_007_access_dashboard_without_login : Test "test_007_access_dashboard_without_login" passed
+2023/04/01 08:20:02 - INFO - test_007_access_dashboard_without_login : Completed test "test_007_access_dashboard_without_login"
+2023/04/01 08:20:07 - INFO - test_logout : Started test 'test_logout_TC008'
+2023/04/01 08:20:07 - INFO - test_logout : Test 'test_logout_TC008' passed
+2023/04/01 08:20:07 - INFO - test_logout : Completed test 'test_logout_TC008'

@@ -5,7 +5,7 @@ import datetime
 class customLogen:
     now = datetime.datetime.now()
     current_date = now.strftime("%Y_%m_%d_T%H:%M:%S")
-    log_file = f"./Report/Logs/automation_{current_date}.log"
+    log_file = f"./Logs/automation_{current_date}.log"
 
     def customLogger(self, logger_name: str, log_level=logging.DEBUG):
         # Set class/method name from where it is called

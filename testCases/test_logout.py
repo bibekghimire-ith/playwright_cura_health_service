@@ -51,7 +51,7 @@ class TestLogout:
             # log error "Login Failed"
             logger.error("Test 'test_logout_TC008' failed")
             # Take screenshot
-            page.screenshot(path="./Report/Screenshots/test_logout_TC008.png", full_page=True)
+            page.screenshot(path="./Screenshots/test_logout_TC008.png", full_page=True)
             assert False
         logger.info("Completed test 'test_logout_TC008'")
 
@@ -90,14 +90,14 @@ class TestLogout:
                 # log error
                 logger.error("Test 'test_navigate_back_TC009' failed")
                 # Take screenshot
-                page.screenshot(path="./Report/Screenshots/test_navigate_back_TC009.png", full_page=True)
+                page.screenshot(path="./Screenshots/test_navigate_back_TC009.png", full_page=True)
                 assert False
         except Exception as e:
             logger.exception(e)
             logger.error("Test 'test_navigate_back_TC009' failed")
             logger.info("Completed test 'test_navigate_back_TC009'")
             # Take screenshot
-            page.screenshot(path="./Report/Screenshots/test_navigate_back_TC009_exception.png", full_page=True)
+            page.screenshot(path="./Screenshots/test_navigate_back_TC009_exception.png", full_page=True)
             assert False
         logger.info("Completed test 'test_navigate_back_TC009'")
         

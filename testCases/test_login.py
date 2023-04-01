@@ -71,7 +71,7 @@ class TestLogin:
             logger.error("Failed to login")
             logger.error('Test "test_002_valid_login" failed')
             # Take screenshot
-            page.screenshot(path="./Report/Screenshots/test_002_valid_login.png", full_page=True)
+            page.screenshot(path="./Screenshots/test_002_valid_login.png", full_page=True)
             assert False
         logger.info("Completed test 'test_002_valid_login'")
 
@@ -113,7 +113,7 @@ class TestLogin:
                 # Take screenshot
                 # TODO: image path needs to be updated. For this, "id" field should be added in the test_data and same should be concatenated 
                 # to the image path
-                image_path = f"./Report/Screenshots/test_003_invalid_login_{test_desc}.png"
+                image_path = f"./Screenshots/test_003_invalid_login_{test_desc}.png"
                 page.screenshot(path=image_path, full_page=True)
                 status.append("Fail")
             
@@ -169,7 +169,7 @@ class TestLogin:
                 # Take screenshot
                 # TODO: image path needs to be updated. For this, "id" field should be added in the test_data and same should be concatenated 
                 # to the image path
-                image_path = f"./Report/Screenshots/test_004_login_input_validation_{test_desc}.png"
+                image_path = f"./Screenshots/test_004_login_input_validation_{test_desc}.png"
                 page.screenshot(path=image_path, full_page=True)
                 status.append("Fail")
 
@@ -216,7 +216,7 @@ class TestLogin:
         #     assert True
         # else:
         #     # Take screenshot
-        #     page.screenshot(path="./Report/Screenshots/test_006_if_password_field_masked.png", full_page=True)
+        #     page.screenshot(path="./Screenshots/test_006_if_password_field_masked.png", full_page=True)
         #     assert False
 
     @pytest.mark.smoke
@@ -241,6 +241,6 @@ class TestLogin:
             # log error
             logger.error('Test "test_007_access_dashboard_without_login" failed')
             # Take screenshot
-            page.screenshot(path="./Report/Screenshots/test_007_access_dashboard_without_login.png", full_page=True)
+            page.screenshot(path="./Screenshots/test_007_access_dashboard_without_login.png", full_page=True)
             assert False
         logger.info('Completed test "test_007_access_dashboard_without_login"')

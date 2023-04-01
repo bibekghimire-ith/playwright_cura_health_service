@@ -51,7 +51,7 @@ class TestAppointmentPage:
                 logger.error(f'Test failed for data: {data}')
                 # TODO: image path needs to be updated. For this, "id" field should be added in the test_data and same should be concatenated 
                 # to the image path
-                image_path = f"./Report/Screenshots/test_createAppointment_TC010_{i}.png"
+                image_path = f"./Screenshots/test_createAppointment_TC010_{i}.png"
                 page.screenshot(path=image_path, full_page=True)
                 result.append("Fail")
             i = i + 1
@@ -110,6 +110,6 @@ class TestAppointmentPage:
             logger.warning("Failed to create appointment")
             logger.error('Test "test_appointment_conformation_TC011" failed')
             # Take screenshot on fail
-            page.screenshot(path="./Report/Screenshots/test_appointment_conformation_TC011.png", full_page=True)
+            page.screenshot(path="./Screenshots/test_appointment_conformation_TC011.png", full_page=True)
             assert False
         logger.info('Test "test_appointment_conformation_TC011" completed')

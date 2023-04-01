@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>CURA HEALTH SERVICE Test Report: (2023-03-31 21:27:53)</title>
+    <link href="assets/style.css" rel="stylesheet" type="text/css"/></head>
+  <body onLoad="init()">
+    <script>/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this file,
+ * You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+
+function toArray(iter) {
+    if (iter === null) {
+        return null;
+    }
+    return Array.prototype.slice.call(iter);
+}
+
+function find(selector, elem) { // eslint-disable-line no-redeclare
+    if (!elem) {
+        elem = document;
+    }
+    return elem.querySelector(selector);
+}
+
+function findAll(selector, elem) {
+    if (!elem) {
+        elem = document;
+    }
+    return toArray(elem.querySelectorAll(selector));
+}
+
+function sortColumn(elem) {
+    toggleSortStates(elem);
+    const colIndex = toArray(elem.parentNode.childNodes).indexOf(elem);
+    let key;
+    if (elem.classList.contains('result')) {
+        key = keyResult;
+    } else if (elem.classList.contains('links')) {
+        key = keyLink;
+    } else {
+        key = keyAlpha;
+    }
+    sortTable(elem, key(colIndex));
+}
+
+function showAllExtras() { // eslint-disable-line no-unused-vars
+    findAll('.col-result').forEach(showExtras);
+}
+
+function hideAllExtras() { // eslint-disable-line no-unused-vars
+    findAll('.col-result').forEach(hideExtras);
+}
+
+function showExtras(colresultElem) {
+    const extras = colresultElem.parentNode.nextElementSibling;
+    const expandcollapse = colresultElem.firstElementChild;
+    extras.classList.remove('collapsed');
+    expandcollapse.classList.remove('expander');
+    expandcollapse.classList.add('collapser');
+}
+
+function hideExtras(colresultElem) {
+    const extras = colresultElem.parentNode.nextElementSibling;
+    const expandcollapse = colresultElem.firstElementChild;
+    extras.classList.add('collapsed');
+    expandcollapse.classList.remove('collapser');
+    expandcollapse.classList.add('expander');
+}
+
+function showFilters() {
+    let visibleString = getQueryParameter('visible') || 'all';
+    visibleString = visibleString.toLowerCase();
+    const checkedItems = visibleString.split(',');
+
+    const filterItems = document.getElementsByClassName('filter');
+    for (let i = 0; i < filterItems.length; i++) {
+        filterItems[i].hidden = false;
+
+        if (visibleString != 'all') {
+            filterItems[i].checked = checkedItems.includes(filterItems[i].getAttribute('data-test-result'));
+            filterTable(filterItems[i]);
+        }
+    }
+}
+
+function addCollapse() {
+    // Add links for show/hide all
+    const resulttable = find('table#results-table');
+    const showhideall = document.createElement('p');
+    showhideall.innerHTML = '<a href="javascript:showAllExtras()">Show all details</a> / ' +
+                            '<a href="javascript:hideAllExtras()">Hide all details</a>';
+    resulttable.parentElement.insertBefore(showhideall, resulttable);
+
+    // Add show/hide link to each result
+    findAll('.col-result').forEach(function(elem) {
+        const collapsed = getQueryParameter('collapsed') || 'Passed';
+        const extras = elem.parentNode.nextElementSibling;
+        const expandcollapse = document.createElement('span');
+        if (extras.classList.contains('collapsed')) {
+            expandcollapse.classList.add('expander');
+        } else if (collapsed.includes(elem.innerHTML)) {
+            extras.classList.add('collapsed');
+            expandcollapse.classList.add('expander');
+        } else {
+            expandcollapse.classList.add('collapser');
+        }
+        elem.appendChild(expandcollapse);
+
+        elem.addEventListener('click', function(event) {
+            if (event.currentTarget.parentNode.nextElementSibling.classList.contains('collapsed')) {
+                showExtras(event.currentTarget);
+            } else {
+                hideExtras(event.currentTarget);
+            }
+        });
+    });
+}
+
+function getQueryParameter(name) {
+    const match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
+
+function init () { // eslint-disable-line no-unused-vars
+    resetSortHeaders();
+
+    addCollapse();
+
+    showFilters();
+
+    sortColumn(find('.initial-sort'));
+
+    findAll('.sortable').forEach(function(elem) {
+        elem.addEventListener('click',
+            function() {
+                sortColumn(elem);
+            }, false);
+    });
+}
+
+function sortTable(clicked, keyFunc) {
+    const rows = findAll('.results-table-row');
+    const reversed = !clicked.classList.contains('asc');
+    const sortedRows = sort(rows, keyFunc, reversed);
+    /* Whole table is removed here because browsers acts much slower
+     * when appending existing elements.
+     */
+    const thead = document.getElementById('results-table-head');
+    document.getElementById('results-table').remove();
+    const parent = document.createElement('table');
+    parent.id = 'results-table';
+    parent.appendChild(thead);
+    sortedRows.forEach(function(elem) {
+        parent.appendChild(elem);
+    });
+    document.getElementsByTagName('BODY')[0].appendChild(parent);
+}
+
+function sort(items, keyFunc, reversed) {
+    const sortArray = items.map(function(item, i) {
+        return [keyFunc(item), i];
+    });
+
+    sortArray.sort(function(a, b) {
+        const keyA = a[0];
+        const keyB = b[0];
+
+        if (keyA == keyB) return 0;
+
+        if (reversed) {
+            return keyA < keyB ? 1 : -1;
+        } else {
+            return keyA > keyB ? 1 : -1;
+        }
+    });
+
+    return sortArray.map(function(item) {
+        const index = item[1];
+        return items[index];
+    });
+}
+
+function keyAlpha(colIndex) {
+    return function(elem) {
+        return elem.childNodes[1].childNodes[colIndex].firstChild.data.toLowerCase();
+    };
+}
+
+function keyLink(colIndex) {
+    return function(elem) {
+        const dataCell = elem.childNodes[1].childNodes[colIndex].firstChild;
+        return dataCell == null ? '' : dataCell.innerText.toLowerCase();
+    };
+}
+
+function keyResult(colIndex) {
+    return function(elem) {
+        const strings = ['Error', 'Failed', 'Rerun', 'XFailed', 'XPassed',
+            'Skipped', 'Passed'];
+        return strings.indexOf(elem.childNodes[1].childNodes[colIndex].firstChild.data);
+    };
+}
+
+function resetSortHeaders() {
+    findAll('.sort-icon').forEach(function(elem) {
+        elem.parentNode.removeChild(elem);
+    });
+    findAll('.sortable').forEach(function(elem) {
+        const icon = document.createElement('div');
+        icon.className = 'sort-icon';
+        icon.textContent = 'vvv';
+        elem.insertBefore(icon, elem.firstChild);
+        elem.classList.remove('desc', 'active');
+        elem.classList.add('asc', 'inactive');
+    });
+}
+
+function toggleSortStates(elem) {
+    //if active, toggle between asc and desc
+    if (elem.classList.contains('active')) {
+        elem.classList.toggle('asc');
+        elem.classList.toggle('desc');
+    }
+
+    //if inactive, reset all other functions and add ascending active
+    if (elem.classList.contains('inactive')) {
+        resetSortHeaders();
+        elem.classList.remove('inactive');
+        elem.classList.add('active');
+    }
+}
+
+function isAllRowsHidden(value) {
+    return value.hidden == false;
+}
+
+function filterTable(elem) { // eslint-disable-line no-unused-vars
+    const outcomeAtt = 'data-test-result';
+    const outcome = elem.getAttribute(outcomeAtt);
+    const classOutcome = outcome + ' results-table-row';
+    const outcomeRows = document.getElementsByClassName(classOutcome);
+
+    for(let i = 0; i < outcomeRows.length; i++){
+        outcomeRows[i].hidden = !elem.checked;
+    }
+
+    const rows = findAll('.results-table-row').filter(isAllRowsHidden);
+    const allRowsHidden = rows.length == 0 ? true : false;
+    const notFoundMessage = document.getElementById('not-found-message');
+    notFoundMessage.hidden = !allRowsHidden;
+}
+</script>
+    <h1>CURA HEALTH SERVICE Test Report: (2023-03-31 21:27:53)</h1>
+    <p>Report generated on 31-Mar-2023 at 21:27:53 by <a href="https://pypi.python.org/pypi/pytest-html">pytest-html</a> v3.2.0</p>
+    <h2>Environment</h2>
+    <table id="environment">
+      <tr>
+        <td>Base URL</td>
+        <td></td></tr>
+      <tr>
+        <td>Packages</td>
+        <td>{"pluggy": "1.0.0", "pytest": "7.2.2"}</td></tr>
+      <tr>
+        <td>Platform</td>
+        <td>macOS-13.2.1-x86_64-i386-64bit</td></tr>
+      <tr>
+        <td>Plugins</td>
+        <td>{"allure-pytest": "2.13.1", "base-url": "2.0.0", "html": "3.2.0", "metadata": "2.0.4", "playwright": "0.3.2", "reporter": "0.5.2", "reporter-html1": "0.8.2"}</td></tr>
+      <tr>
+        <td>Python</td>
+        <td>3.11.2</td></tr></table>
+    <h2>Summary</h2>&lt;h4&gt;Report generated at 2023-03-31_21:27:53&lt;/h4&gt;
+    <p>2 tests ran in 43.03 seconds. </p>
+    <p class="filter" hidden="true">(Un)check the boxes to filter the results.</p><input checked="true" class="filter" data-test-result="passed" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="passed">1 passed</span>, <input checked="true" class="filter" data-test-result="skipped" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="skipped">0 skipped</span>, <input checked="true" class="filter" data-test-result="failed" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="failed">1 failed</span>, <input checked="true" class="filter" data-test-result="error" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="error">0 errors</span>, <input checked="true" class="filter" data-test-result="xfailed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="xfailed">0 expected failures</span>, <input checked="true" class="filter" data-test-result="xpassed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="xpassed">0 unexpected passes</span>
+    <h2>Results</h2>
+    <table id="results-table">
+      <thead id="results-table-head">
+        <tr>
+          <th class="sortable result initial-sort" col="result">Result</th>
+          <th class="sortable" col="name">Test</th>
+          <th class="sortable" col="duration">Duration</th>
+          <th class="sortable links" col="links">Links</th></tr>
+        <tr hidden="true" id="not-found-message">
+          <th colspan="4">No results found. Try to check the filters</th></tr></thead>
+      <tbody class="failed results-table-row">
+        <tr>
+          <td class="col-result">Failed</td>
+          <td class="col-name">testCases/test_logout.py::TestLogout::test_navigate_back_TC009[firefox]</td>
+          <td class="col-duration">29.45</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log">self = &lt;testCases.test_logout.TestLogout object at 0x10376c890&gt;<br/>page = &lt;Page url=&#x27;https://katalon-demo-cura.herokuapp.com/#appointment&#x27;&gt;<br/><br/>    def test_navigate_back_TC009(self, page: Page) -&gt; None:<br/>        &quot;&quot;&quot;After logging out, if back arrow of browser is clicked, page should not be router to &quot;Appointment Page&quot;<br/>            TC Steps:<br/>            1. Login<br/>            2. Logout<br/>            3. Click page back arrow (&lt;-) of browser<br/>        Args:<br/>            page (Page): _description_<br/>        &quot;&quot;&quot;<br/>        logger.info(&quot;Started test &#x27;test_navigate_back_TC009&#x27;&quot;)<br/>        login = LoginPage(page)<br/>        login.load_loginPage()<br/>        login.login(self.user)<br/>    <br/>        # Logout<br/>        page.locator(self.link_toggle_id).click()<br/>        page.locator(self.link_logout_xpath).wait_for()<br/>        page.locator(self.link_logout_xpath).click()<br/>    <br/>        try:<br/>            page.go_back()<br/>&gt;           expect(page).to_have_url(self.baseURL)<br/><br/>testCases/test_logout.py:80: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;playwright._impl._assertions.PageAssertions object at 0x103b60650&gt;<br/>url_or_reg_exp = &#x27;https://katalon-demo-cura.herokuapp.com/&#x27;<br/><br/>    def to_have_url(<br/>        self,<br/>        url_or_reg_exp: typing.Union[str, typing.Pattern[str]],<br/>        *,<br/>        timeout: typing.Optional[float] = None<br/>    ) -&gt; None:<br/>        &quot;&quot;&quot;PageAssertions.to_have_url<br/>    <br/>        Ensures the page is navigated to the given URL.<br/>    <br/>        **Usage**<br/>    <br/>        ```py<br/>        import re<br/>        from playwright.async_api import expect<br/>    <br/>        # ...<br/>        await expect(page).to_have_url(re.compile(\&quot;.*checkout\&quot;))<br/>        ```<br/>    <br/>        ```py<br/>        import re<br/>        from playwright.sync_api import expect<br/>    <br/>        # ...<br/>        expect(page).to_have_url(re.compile(\&quot;.*checkout\&quot;))<br/>        ```<br/>    <br/>        Parameters<br/>        ----------<br/>        url_or_reg_exp : Union[Pattern[str], str]<br/>            Expected URL string or RegExp.<br/>        timeout : Union[float, None]<br/>            Time to retry the assertion for.<br/>        &quot;&quot;&quot;<br/>        __tracebackhide__ = True<br/>    <br/>        return mapping.from_maybe_impl(<br/>&gt;           self._sync(<br/>                self._impl_obj.to_have_url(<br/>                    url_or_reg_exp=url_or_reg_exp, timeout=timeout<br/>                )<br/>            )<br/>        )<br/><br/>/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/playwright/sync_api/_generated.py:18803: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;playwright._impl._assertions.PageAssertions object at 0x103b60650&gt;<br/>coro = &lt;coroutine object PageAssertions.to_have_url at 0x1037bbbc0&gt;<br/><br/>    def _sync(<br/>        self,<br/>        coro: Union[Coroutine[Any, Any, Any], Generator[Any, Any, Any]],<br/>    ) -&gt; Any:<br/>        __tracebackhide__ = True<br/>        g_self = greenlet.getcurrent()<br/>        task: asyncio.tasks.Task[Any] = self._loop.create_task(coro)<br/>        setattr(task, &quot;__pw_stack__&quot;, inspect.stack())<br/>        setattr(task, &quot;__pw_stack_trace__&quot;, traceback.extract_stack())<br/>    <br/>        task.add_done_callback(lambda _: g_self.switch())<br/>        while not task.done():<br/>            self._dispatcher_fiber.switch()<br/>        asyncio._set_running_loop(self._loop)<br/>&gt;       return task.result()<br/><br/>/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/playwright/_impl/_sync_base.py:104: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;playwright._impl._assertions.PageAssertions object at 0x103b60650&gt;<br/>url_or_reg_exp = &#x27;https://katalon-demo-cura.herokuapp.com/&#x27;, timeout = None<br/><br/>    async def to_have_url(<br/>        self, url_or_reg_exp: Union[str, Pattern[str]], timeout: float = None<br/>    ) -&gt; None:<br/>        __tracebackhide__ = True<br/>        base_url = self._actual_page.context._options.get(&quot;baseURL&quot;)<br/>        if isinstance(url_or_reg_exp, str) and base_url:<br/>            url_or_reg_exp = urljoin(base_url, url_or_reg_exp)<br/>        expected_text = to_expected_text_values([url_or_reg_exp])<br/>&gt;       await self._expect_impl(<br/>            &quot;to.have.url&quot;,<br/>            FrameExpectOptions(expectedText=expected_text, timeout=timeout),<br/>            url_or_reg_exp,<br/>            &quot;Page URL expected to be&quot;,<br/>        )<br/><br/>/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/playwright/_impl/_assertions.py:98: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;playwright._impl._assertions.PageAssertions object at 0x103b60650&gt;, expression = &#x27;to.have.url&#x27;<br/>expect_options = {&#x27;expectedText&#x27;: [{&#x27;matchSubstring&#x27;: False, &#x27;normalizeWhiteSpace&#x27;: False, &#x27;string&#x27;: &#x27;https://katalon-demo-cura.herokuapp.com/&#x27;}], &#x27;isNot&#x27;: False, &#x27;timeout&#x27;: 5000}<br/>expected = &#x27;https://katalon-demo-cura.herokuapp.com/&#x27;, message = &#x27;Page URL expected to be&#x27;<br/><br/>    async def _expect_impl(<br/>        self,<br/>        expression: str,<br/>        expect_options: FrameExpectOptions,<br/>        expected: Any,<br/>        message: str,<br/>    ) -&gt; None:<br/>        __tracebackhide__ = True<br/>        expect_options[&quot;isNot&quot;] = self._is_not<br/>        if expect_options.get(&quot;timeout&quot;) is None:<br/>            expect_options[&quot;timeout&quot;] = 5_000<br/>        if expect_options[&quot;isNot&quot;]:<br/>            message = message.replace(&quot;expected to&quot;, &quot;expected not to&quot;)<br/>        if &quot;useInnerText&quot; in expect_options and expect_options[&quot;useInnerText&quot;] is None:<br/>            del expect_options[&quot;useInnerText&quot;]<br/>        result = await self._actual_locator._expect(expression, expect_options)<br/>        if result[&quot;matches&quot;] == self._is_not:<br/>            actual = result.get(&quot;received&quot;)<br/>            log = &quot;\n&quot;.join(result.get(&quot;log&quot;, &quot;&quot;)).strip()<br/>            if log:<br/>                log = &quot;\nCall log:\n&quot; + log<br/>            if expected is not None:<br/>&gt;               raise AssertionError(<br/>                    f&quot;{message} &#x27;{expected}&#x27;\nActual value: {actual} {log}&quot;<br/>                )<br/><span class="error">E               AssertionError: Page URL expected to be &#x27;https://katalon-demo-cura.herokuapp.com/&#x27;</span><br/><span class="error">E               Actual value: https://katalon-demo-cura.herokuapp.com/#appointment </span><br/><span class="error">E               Call log:</span><br/><span class="error">E               PageAssertions.to_have_url with timeout 5000ms</span><br/><span class="error">E               waiting for locator(&quot;:root&quot;)</span><br/><span class="error">E                 locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;</span><br/><span class="error">E                 unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;</span><br/><span class="error">E               waiting for locator(&quot;:root&quot;)</span><br/><span class="error">E                 locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;</span><br/><span class="error">E                 unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;</span><br/><span class="error">E                 locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;</span><br/><span class="error">E                 unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;</span><br/><span class="error">E                 locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;</span><br/><span class="error">E                 unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;</span><br/><span class="error">E                 locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;</span><br/><span class="error">E                 unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;</span><br/><span class="error">E                 locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;</span><br/><span class="error">E                 unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;</span><br/><span class="error">E                 locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;</span><br/><span class="error">E                 unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;</span><br/><span class="error">E                 locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;</span><br/><span class="error">E                 unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;</span><br/><span class="error">E                 locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;</span><br/><span class="error">E                 unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;</span><br/><br/>/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/playwright/_impl/_assertions.py:55: AssertionError<br/><br/>During handling of the above exception, another exception occurred:<br/><br/>self = &lt;testCases.test_logout.TestLogout object at 0x10376c890&gt;<br/>page = &lt;Page url=&#x27;https://katalon-demo-cura.herokuapp.com/#appointment&#x27;&gt;<br/><br/>    def test_navigate_back_TC009(self, page: Page) -&gt; None:<br/>        &quot;&quot;&quot;After logging out, if back arrow of browser is clicked, page should not be router to &quot;Appointment Page&quot;<br/>            TC Steps:<br/>            1. Login<br/>            2. Logout<br/>            3. Click page back arrow (&lt;-) of browser<br/>        Args:<br/>            page (Page): _description_<br/>        &quot;&quot;&quot;<br/>        logger.info(&quot;Started test &#x27;test_navigate_back_TC009&#x27;&quot;)<br/>        login = LoginPage(page)<br/>        login.load_loginPage()<br/>        login.login(self.user)<br/>    <br/>        # Logout<br/>        page.locator(self.link_toggle_id).click()<br/>        page.locator(self.link_logout_xpath).wait_for()<br/>        page.locator(self.link_logout_xpath).click()<br/>    <br/>        try:<br/>            page.go_back()<br/>            expect(page).to_have_url(self.baseURL)<br/>            btn_bookAppointment_id = &quot;#btn-book-appointment&quot;<br/>            check = page.locator(btn_bookAppointment_id).is_visible(timeout=40000)<br/>            if check == False:<br/>                # Page is not navigated to Appointment page<br/>                # Test passed<br/>                logger.info(&quot;Test &#x27;test_navigate_back_TC009&#x27; passed&quot;)<br/>                assert True<br/>            else:<br/>                # log error<br/>                logger.error(&quot;Test &#x27;test_navigate_back_TC009&#x27; failed&quot;)<br/>                # Take screenshot<br/>                page.screenshot(path=&quot;./Report/Screenshots/test_navigate_back_TC009.png&quot;, full_page=True)<br/>                assert False<br/>        except Exception as e:<br/>            logger.exception(e)<br/>            logger.error(&quot;Test &#x27;test_navigate_back_TC009&#x27; failed&quot;)<br/>            logger.info(&quot;Completed test &#x27;test_navigate_back_TC009&#x27;&quot;)<br/>            # Take screenshot<br/>            page.screenshot(path=&quot;./Report/Screenshots/test_navigate_back_TC009_exception.png&quot;, full_page=True)<br/>&gt;           assert False<br/><span class="error">E           assert False</span><br/><br/>testCases/test_logout.py:100: AssertionError<br/> -------------------------------Captured log call-------------------------------- <br/><span class="ansi32">INFO    </span> test_logout:test_logout.py:68 Started test &#x27;test_navigate_back_TC009&#x27;
+<span class="ansi1"></span><span class="ansi1 ansi31">ERROR   </span> test_logout:test_logout.py:95 Page URL expected to be &#x27;https://katalon-demo-cura.herokuapp.com/&#x27;
+Actual value: https://katalon-demo-cura.herokuapp.com/#appointment 
+Call log:
+PageAssertions.to_have_url with timeout 5000ms
+waiting for locator(&quot;:root&quot;)
+  locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;
+  unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;
+waiting for locator(&quot;:root&quot;)
+  locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;
+  unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;
+  locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;
+  unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;
+  locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;
+  unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;
+  locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;
+  unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;
+  locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;
+  unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;
+  locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;
+  unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;
+  locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;
+  unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;
+  locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;
+  unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;
+Traceback (most recent call last):
+  File &quot;/Users/bibekghimire/Documents/playwright_cura_health_service/testCases/test_logout.py&quot;, line 80, in test_navigate_back_TC009
+    expect(page).to_have_url(self.baseURL)
+  File &quot;/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/playwright/sync_api/_generated.py&quot;, line 18803, in to_have_url
+    self._sync(
+  File &quot;/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/playwright/_impl/_sync_base.py&quot;, line 104, in _sync
+    return task.result()
+           ^^^^^^^^^^^^^
+  File &quot;/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/playwright/_impl/_assertions.py&quot;, line 98, in to_have_url
+    await self._expect_impl(
+  File &quot;/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/playwright/_impl/_assertions.py&quot;, line 55, in _expect_impl
+    raise AssertionError(
+AssertionError: Page URL expected to be &#x27;https://katalon-demo-cura.herokuapp.com/&#x27;
+Actual value: https://katalon-demo-cura.herokuapp.com/#appointment 
+Call log:
+PageAssertions.to_have_url with timeout 5000ms
+waiting for locator(&quot;:root&quot;)
+  locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;
+  unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;
+waiting for locator(&quot;:root&quot;)
+  locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;
+  unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;
+  locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;
+  unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;
+  locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;
+  unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;
+  locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;
+  unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;
+  locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;
+  unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;
+  locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;
+  unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;
+  locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;
+  unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;
+  locator resolved to &lt;html lang=&quot;en&quot;&gt;…&lt;/html&gt;
+  unexpected value &quot;https://katalon-demo-cura.herokuapp.com/#appointment&quot;
+<span class="ansi1"></span><span class="ansi1 ansi31">ERROR   </span> test_logout:test_logout.py:96 Test &#x27;test_navigate_back_TC009&#x27; failed
+<span class="ansi32">INFO    </span> test_logout:test_logout.py:97 Completed test &#x27;test_navigate_back_TC009&#x27;<br/></div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">testCases/test_logout.py::TestLogout::test_logout_TC008[firefox]</td>
+          <td class="col-duration">13.39</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> -------------------------------Captured log call-------------------------------- <br/><span class="ansi32">INFO    </span> test_logout:test_logout.py:30 Started test &#x27;test_logout_TC008&#x27;
+<span class="ansi32">INFO    </span> test_logout:test_logout.py:43 Test &#x27;test_logout_TC008&#x27; passed
+<span class="ansi32">INFO    </span> test_logout:test_logout.py:56 Completed test &#x27;test_logout_TC008&#x27;<br/></div></td></tr></tbody></table></body></html>
