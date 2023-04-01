@@ -23,6 +23,7 @@ class TestAppointmentPage:
     # logger initialization
     loggen = customLogen()
     
+    @pytest.mark.regression
     def test_createAppointment_TC010(self, page: Page) -> None:
         logger = self.loggen.customLogger("test_createAppointment_TC010", logging.INFO)
         logger.info('Starting Test "test_createAppointment_TC010"')
@@ -63,6 +64,7 @@ class TestAppointmentPage:
             assert False
         logger.info('Test "test_createAppointment_TC010" completed')
 
+    @pytest.mark.regression
     def test_appointment_conformation_TC011(self, page: Page) -> None:
         logger = self.loggen.customLogger("test_appointment_conformation_TC011")
         logger.info('Test "test_appointment_conformation_TC011" started')
