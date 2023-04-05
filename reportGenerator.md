@@ -4,7 +4,7 @@ To generate a pytest-html report with a unique name, you can use the --html comm
 `pip3 install pytest-html`
 
 Here is an example implementation that generates a unique filename for the pytest-html report:
-```
+```py
 import pytest
 import datetime
 
