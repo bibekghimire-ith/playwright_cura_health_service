@@ -1,0 +1,66 @@
+2023/03/28 21:42:30 - INFO - test_logout : Started test 'test_logout_TC008'
+2023/03/28 21:42:33 - INFO - test_logout : Test 'test_logout_TC008' passed
+2023/03/28 21:42:33 - INFO - test_logout : Completed test 'test_logout_TC008'
+2023/03/28 21:42:33 - INFO - test_logout : Started test 'test_navigate_back_TC009'
+2023/03/28 21:42:45 - ERROR - test_logout : Page URL expected to be 'https://katalon-demo-cura.herokuapp.com/'
+Actual value: https://katalon-demo-cura.herokuapp.com/#appointment 
+Call log:
+PageAssertions.to_have_url with timeout 5000ms
+waiting for locator(":root")
+  locator resolved to <html lang="en">…</html>
+  unexpected value "https://katalon-demo-cura.herokuapp.com/#appointment"
+waiting for locator(":root")
+  locator resolved to <html lang="en">…</html>
+  unexpected value "https://katalon-demo-cura.herokuapp.com/#appointment"
+  locator resolved to <html lang="en">…</html>
+  unexpected value "https://katalon-demo-cura.herokuapp.com/#appointment"
+  locator resolved to <html lang="en">…</html>
+  unexpected value "https://katalon-demo-cura.herokuapp.com/#appointment"
+  locator resolved to <html lang="en">…</html>
+  unexpected value "https://katalon-demo-cura.herokuapp.com/#appointment"
+  locator resolved to <html lang="en">…</html>
+  unexpected value "https://katalon-demo-cura.herokuapp.com/#appointment"
+  locator resolved to <html lang="en">…</html>
+  unexpected value "https://katalon-demo-cura.herokuapp.com/#appointment"
+  locator resolved to <html lang="en">…</html>
+  unexpected value "https://katalon-demo-cura.herokuapp.com/#appointment"
+  locator resolved to <html lang="en">…</html>
+  unexpected value "https://katalon-demo-cura.herokuapp.com/#appointment"
+Traceback (most recent call last):
+  File "/Users/bibekghimire/Documents/playwright_cura_health_service/testCases/test_logout.py", line 80, in test_navigate_back_TC009
+    expect(page).to_have_url(self.baseURL)
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/playwright/sync_api/_generated.py", line 18803, in to_have_url
+    self._sync(
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/playwright/_impl/_sync_base.py", line 104, in _sync
+    return task.result()
+           ^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/playwright/_impl/_assertions.py", line 98, in to_have_url
+    await self._expect_impl(
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/playwright/_impl/_assertions.py", line 55, in _expect_impl
+    raise AssertionError(
+AssertionError: Page URL expected to be 'https://katalon-demo-cura.herokuapp.com/'
+Actual value: https://katalon-demo-cura.herokuapp.com/#appointment 
+Call log:
+PageAssertions.to_have_url with timeout 5000ms
+waiting for locator(":root")
+  locator resolved to <html lang="en">…</html>
+  unexpected value "https://katalon-demo-cura.herokuapp.com/#appointment"
+waiting for locator(":root")
+  locator resolved to <html lang="en">…</html>
+  unexpected value "https://katalon-demo-cura.herokuapp.com/#appointment"
+  locator resolved to <html lang="en">…</html>
+  unexpected value "https://katalon-demo-cura.herokuapp.com/#appointment"
+  locator resolved to <html lang="en">…</html>
+  unexpected value "https://katalon-demo-cura.herokuapp.com/#appointment"
+  locator resolved to <html lang="en">…</html>
+  unexpected value "https://katalon-demo-cura.herokuapp.com/#appointment"
+  locator resolved to <html lang="en">…</html>
+  unexpected value "https://katalon-demo-cura.herokuapp.com/#appointment"
+  locator resolved to <html lang="en">…</html>
+  unexpected value "https://katalon-demo-cura.herokuapp.com/#appointment"
+  locator resolved to <html lang="en">…</html>
+  unexpected value "https://katalon-demo-cura.herokuapp.com/#appointment"
+  locator resolved to <html lang="en">…</html>
+  unexpected value "https://katalon-demo-cura.herokuapp.com/#appointment"
+2023/03/28 21:42:45 - ERROR - test_logout : Test 'test_navigate_back_TC009' failed
+2023/03/28 21:42:45 - INFO - test_logout : Completed test 'test_navigate_back_TC009'

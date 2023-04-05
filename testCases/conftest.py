@@ -65,4 +65,4 @@ def pytest_configure(config):
     """
     Add a unique identifier to the pytest-html report filename
     """
-    config.option.htmlpath = f"Report/Reports/smoke_test_report_{datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}.html"
+    config.option.htmlpath = f"./Reports/smoke_test_report_{datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}.html"
